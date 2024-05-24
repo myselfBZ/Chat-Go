@@ -1,48 +1,36 @@
 <!DOCTYPE html>
 <html>
+  <body>
+    <input type="text" id="msg" placeholder="message" />
+    <input type="submit" onclick="sendMsg()" />
 
-	<body>
+    <script>
+      let ws = new WebSocket("http://localhost:8080/ws");
+      ws.onopen = (event) => {
+        let p = document.createElement("p");
+        p.textContent = "Connected";
+        document.body.appendChild(p);
+        setTimeout(function () {
+          document.body.removeChild(p);
+        }, 2000);
+      };
+      ws.onmessage = (event) => {
+        let msg = JSON.parse(event.data);
+        let p = document.createElement("p");
+        p.textContent = msg.content;
+        document.body.appendChild(p);
+      };
+      function sendMsg() {
+        let msg = document.getElementById("msg");
+        if (msg.value != "") {
+          let json = {
+            content: msg.value,
+          };
 
-		<input type="text" id="msg" placeholder="message">
-		<input type="submit" onclick="sendMsg()">
-
-		<script>
-
-
-			let ws = new WebSocket("http://localhost:8080/ws")
-			ws.onopen = (event) => { 
-
-							let p = document.createElement("p")
-							p.textContent = "Connected"
-							document.body.appendChild(p)
-							setTimeout(function(){
-										document.body.removeChild(p)
-										}, 2000)
-						}
-			ws.onmessage = (event) => {
-
-							let msg = JSON.parse(event.data)
-							let p = document.createElement("p")
-							p.textContent = msg.content
-							document.body.appendChild(p)
-						}
-			function sendMsg(){
-
-							let msg = document.getElementById("msg")
-							if (msg.value != ""){
-	
-											let json = {
-
-															content:msg.value,
-
-														}
-
-											ws.send(JSON.stringify(json))
-											msg.value = ""
-										}
-						}
-
-		</script>
-	</body>
-	
+          ws.send(JSON.stringify(json));
+          msg.value = "";
+        }
+      }
+    </script>
+  </body>
 </html>
