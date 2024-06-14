@@ -1,36 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
   <body>
-    <input type="text" id="msg" placeholder="message" />
-    <input type="submit" onclick="sendMsg()" />
-
+    <h1>Enter your own username</h1>
+    <input type="text" id="username" />
+    <input type="text" id="reciever" placeholder="username" />
+    <input type="text" id="text" placeholder="text" />
+    <input type="submit" onClick="sendMsg()">
     <script>
-      let ws = new WebSocket("http://localhost:8080/ws");
-      ws.onopen = (event) => {
-        let p = document.createElement("p");
-        p.textContent = "Connected";
-        document.body.appendChild(p);
-        setTimeout(function () {
-          document.body.removeChild(p);
-        }, 2000);
+      let username = document.getElementById("username");
+      let text = document.getElementById("text");
+      let socket = new WebSocket("ws://localhost:8080/ws");
+      let reciever = document.getElementById("reciever");
+      socket.onopen = () => {
+        console.log("connected");
       };
-      ws.onmessage = (event) => {
-        let msg = JSON.parse(event.data);
-        let p = document.createElement("p");
-        p.textContent = msg.content;
-        document.body.appendChild(p);
+      socket.onmessage = (message) => {
+        console.log(message.data);
       };
       function sendMsg() {
-        let msg = document.getElementById("msg");
-        if (msg.value != "") {
-          let json = {
-            content: msg.value,
-          };
-
-          ws.send(JSON.stringify(json));
-          msg.value = "";
-        }
+        let msg = {
+          sender: username,
+          content: text,
+          reciever: reciever,
+        };
+        let jsonMsg = JSON.stringify(msg);
+        socket.send(jsonMsg);
       }
     </script>
   </body>
 </html>
+
