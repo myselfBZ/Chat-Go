@@ -1,2 +1,1 @@
-#Small chat app with Golang web sockets
-#One to one Chat !!!
+Backend for a chatting app, with JwT authentication implemented
