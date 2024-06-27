@@ -7,17 +7,22 @@
   </head>
   <body>
     <h1>Enter your own username</h1>
-    <input type="text" id="username" />
     <input type="text" id="reciever" placeholder="username" />
     <input type="text" id="text" placeholder="text" />
     <input type="submit" onClick="sendMsg()">
     <script>
-      let username = document.getElementById("username");
+        let username = localStorage.getItem("username");
+        if(username === null || username === undefined){
+        window.location.href = "/login"
+        }
+        
       let text = document.getElementById("text");
       let socket = new WebSocket("ws://localhost:8080/ws");
-      let reciever = document.getElementById("reciever");
+      let client = {username:username}
+      let jsonClient = JSON.stringify(client)
+      socket.send(jsonClient)
       socket.onopen = () => {
-        console.log("connected");
+        console.log("connected")
       };
       socket.onmessage = (message) => {
         console.log(message.data);
